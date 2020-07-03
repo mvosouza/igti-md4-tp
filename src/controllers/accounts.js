@@ -14,7 +14,7 @@ const getAccount = async (agencia, conta) => {
 };
 
 //Item 4
-const depositRouter = async (req, res) => {
+const depositRoute = async (req, res) => {
   try {
     const { agencia, conta, value } = req.body;
 
@@ -39,7 +39,7 @@ const depositRouter = async (req, res) => {
 };
 
 //Item 5
-const withdrawRouter = async (req, res) => {
+const withdrawRoute = async (req, res) => {
   try {
     const { agencia, conta, value } = req.body;
 
@@ -70,7 +70,7 @@ const withdrawRouter = async (req, res) => {
 };
 
 //Item 6
-const balenceRouter = async (req, res) => {
+const balenceRoute = async (req, res) => {
   try {
     const { agencia, conta } = req.params;
 
@@ -86,4 +86,10 @@ const balenceRouter = async (req, res) => {
   }
 };
 
-export { depositRouter, withdrawRouter, balenceRouter };
+//Item 7
+const deleteAccountRoute = async (req, res) => {
+  try {
+  } catch (err) {}
+};
+
+export { depositRoute, withdrawRoute, balenceRoute };
