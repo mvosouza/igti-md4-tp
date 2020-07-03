@@ -3,7 +3,7 @@ import {
   connectToMongoDB,
   resetAccountsCollection,
 } from './config/dbConfig.js';
-import accountsRouter from './routers/accountRouter.js';
+import accountsRouter from './routes/accountRouter.js';
 
 const port = 3000;
 const app = express();
