@@ -1,5 +1,5 @@
 {
-  "name": "igti-md4-trabalho-pratico",
+  "name": "my-bank-api",
   "version": "1.0.0",
   "description": "Trabalho prático do módulo 4 - IGTI Full Stack Developer",
   "main": "src/app.js",
