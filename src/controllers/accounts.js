@@ -98,13 +98,12 @@ const transferRoute = async (req, res) => {
   try {
     const { originAccount, destinationAccount, value } = req.body;
 
-    const origin = await getAccount(originAccount.agencia, originAccount.conta);
+    const origin = await accountsModel.findOne({ conta: originAccount });
     if (!origin) return res.status(404).send('Origin account not found!');
 
-    const destination = await getAccount(
-      destinationAccount.agencia,
-      destinationAccount.conta
-    );
+    const destination = await accountsModel.findOne({
+      conta: destinationAccount,
+    });
     if (!destination)
       return res.status(404).send('Destination account not found!');
 
