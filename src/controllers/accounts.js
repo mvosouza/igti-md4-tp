@@ -11,10 +11,7 @@ const getAccount = async (agencia, conta) => {
     conta,
   });
 
-  if (!accountDocument) {
-    return null;
-  }
-
+  if (!accountDocument) return null;
   return accountDocument.toJSON();
 };
 
@@ -26,10 +23,7 @@ const depositRoute = async (req, res) => {
     if (value < 0) throw new Error('The deposit value must be bigger than 0.');
 
     const account = await getAccount(agencia, conta);
-    if (!account) {
-      res.status(404).send('Account not found!');
-      return;
-    }
+    if (!account) return res.status(404).send('Account not found!');
 
     const { balance } = await accountsModel.findOneAndUpdate(
       { agencia, conta },
@@ -52,10 +46,8 @@ const withdrawRoute = async (req, res) => {
 
     const account = await getAccount(agencia, conta);
 
-    if (!account) {
-      res.status(404).send('Account not found!');
-      return;
-    }
+    if (!account) return res.status(404).send('Account not found!');
+
     const newBalance = account.balance - value - FEE.WITHDRAW;
     if (newBalance < 0)
       return res.status(200).send('Account with insufficient funds!');
