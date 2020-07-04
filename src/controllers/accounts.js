@@ -1,7 +1,12 @@
 import accountsModel from '../models/account.js';
 
+const FEE = {
+  WITHDRAW: 1,
+  TRANFER: 8,
+};
+
 const getAccount = async (agencia, conta) => {
-  const accountDocument = await await accountsModel.findOne({
+  const accountDocument = await accountsModel.findOne({
     agencia,
     conta,
   });
@@ -41,7 +46,6 @@ const depositRoute = async (req, res) => {
 //Item 5
 const withdrawRoute = async (req, res) => {
   try {
-    const FEE = 1;
     const { agencia, conta, value } = req.body;
 
     if (value < 0) throw new Error('The withdraw value must be bigger than 0.');
@@ -52,11 +56,9 @@ const withdrawRoute = async (req, res) => {
       res.status(404).send('Account not found!');
       return;
     }
-    const newBalance = account.balance - value - FEE;
-    if (newBalance < 0) {
-      res.status(200).send('Account with insufficient funds!');
-      return;
-    }
+    const newBalance = account.balance - value - FEE.WITHDRAW;
+    if (newBalance < 0)
+      return res.status(200).send('Account with insufficient funds!');
 
     const { balance } = await accountsModel.findOneAndUpdate(
       { agencia, conta },
@@ -76,10 +78,7 @@ const balenceRoute = async (req, res) => {
     const { agencia, conta } = req.params;
 
     const account = await getAccount(agencia, conta);
-    if (!account) {
-      res.status(404).send('Account not found!');
-      return;
-    }
+    if (!account) return res.status(404).send('Account not found!');
 
     res.status(200).json({ balance: account.balance });
   } catch (err) {
@@ -102,4 +101,50 @@ const deleteAccountRoute = async (req, res) => {
   }
 };
 
-export { depositRoute, withdrawRoute, balenceRoute, deleteAccountRoute };
+//Item 8
+const transferRoute = async (req, res) => {
+  try {
+    const { originAccount, destinationAccount, value } = req.body;
+
+    const origin = await getAccount(originAccount.agencia, originAccount.conta);
+    if (!origin) return res.status(404).send('Origin account not found!');
+
+    const destination = await getAccount(
+      destinationAccount.agencia,
+      destinationAccount.conta
+    );
+    if (!destination)
+      return res.status(404).send('Destination account not found!');
+
+    let fee = 0;
+    if (origin.agencia !== destination.agencia) fee = FEE.TRANFER;
+
+    const newOriginBalance = origin.balance - value - fee;
+    if (newOriginBalance < 0)
+      return res.status(200).send('Origin account with insufficient funds!');
+
+    const originRes = await accountsModel.findByIdAndUpdate(
+      origin._id,
+      {
+        balance: newOriginBalance,
+      },
+      { new: true }
+    );
+
+    await accountsModel.findByIdAndUpdate(destination._id, {
+      balance: destination.balance + value,
+    });
+
+    res.json({ balance: originRes.balance });
+  } catch (err) {
+    res.status(500).json({ location: 'transfer', error: err });
+  }
+};
+
+export {
+  depositRoute,
+  withdrawRoute,
+  balenceRoute,
+  deleteAccountRoute,
+  transferRoute,
+};

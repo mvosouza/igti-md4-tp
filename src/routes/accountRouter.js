@@ -4,6 +4,7 @@ import {
   withdrawRoute,
   balenceRoute,
   deleteAccountRoute,
+  transferRoute,
 } from '../controllers/accounts.js';
 
 const router = express.Router();
@@ -19,5 +20,8 @@ router.get('/:agencia/:conta/balance', balenceRoute);
 
 //Deleta uma conta
 router.delete('/:agencia/:conta', deleteAccountRoute);
+
+//Transferencia
+router.patch('/transfer', transferRoute);
 
 export default router;
