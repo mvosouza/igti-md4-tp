@@ -133,10 +133,27 @@ const transferRoute = async (req, res) => {
   }
 };
 
+//Item 9
+const balanceAverageRoute = async (req, res) => {
+  const { agencia } = req.params;
+
+  const balanceAverageCalc = await accountsModel.aggregate([
+    { $match: { agencia: Number(agencia) } },
+    { $group: { _id: '$agencia', balanceAverage: { $avg: '$balance' } } },
+  ]);
+
+  const agenciaResult = balanceAverageCalc[0];
+  let balanceAverage = 0;
+  if (agenciaResult) balanceAverage = agenciaResult.balanceAverage;
+
+  res.json({ balanceAverage });
+};
+
 export {
   depositRoute,
   withdrawRoute,
   balenceRoute,
   deleteAccountRoute,
   transferRoute,
+  balanceAverageRoute,
 };
