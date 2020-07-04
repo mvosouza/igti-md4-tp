@@ -8,6 +8,7 @@ import {
   balanceAverageRoute,
   lowestBalanceClientsRoute,
   biggestBalanceClientsRoute,
+  transferClientBiggestBalanceRoute,
 } from '../controllers/accounts.js';
 
 const router = express.Router();
@@ -35,5 +36,11 @@ router.get('/lowestBalanceClients/:limit', lowestBalanceClientsRoute);
 
 //Mostrar X clientes de maior saldo
 router.get('/biggestBalanceClients/:limit', biggestBalanceClientsRoute);
+
+//Tranferir o cliente com maior saldo de cada agencia para a agencia 99
+router.patch(
+  '/transfer/biggestBalancePerAgency',
+  transferClientBiggestBalanceRoute
+);
 
 export default router;

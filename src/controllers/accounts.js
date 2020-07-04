@@ -181,6 +181,39 @@ const biggestBalanceClientsRoute = async (req, res) => {
   }
 };
 
+const transferClientBiggestBalanceRoute = async (req, res) => {
+  try {
+    const biggestBalancePerAgency = await accountsModel.aggregate([
+      { $group: { _id: '$agencia', balance: { $max: '$balance' } } },
+    ]);
+    const filters = biggestBalancePerAgency.map(({ _id, balance }) => ({
+      agencia: _id,
+      balance,
+    }));
+    const accounts = await accountsModel
+      .find({
+        $or: [...filters],
+      })
+      .lean();
+
+    const accountsIds = accounts.map(({ _id }) => _id);
+    await accountsModel.updateMany(
+      {
+        _id: { $in: [...accountsIds] },
+      },
+      { agencia: 99 }
+    );
+
+    const privateAccoutns = await accountsModel.find({ agencia: 99 }).lean();
+
+    res.json(privateAccoutns);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ location: 'transferClientBiggestBalance', error: err.message });
+  }
+};
+
 export {
   depositRoute,
   withdrawRoute,
@@ -190,4 +223,5 @@ export {
   balanceAverageRoute,
   lowestBalanceClientsRoute,
   biggestBalanceClientsRoute,
+  transferClientBiggestBalanceRoute,
 };

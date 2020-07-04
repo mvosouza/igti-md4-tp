@@ -13,6 +13,6 @@ app.use('/accounts', accountsRouter);
 
 app.listen(port, async () => {
   await connectToMongoDB();
-  // await resetAccountsCollection();
+  await resetAccountsCollection();
   console.log(`Web API is running on port ${port}`);
 });
