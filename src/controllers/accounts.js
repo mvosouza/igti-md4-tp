@@ -167,6 +167,20 @@ const lowestBalanceClientsRoute = async (req, res) => {
   }
 };
 
+//Item 11
+const biggestBalanceClientsRoute = async (req, res) => {
+  try {
+    const { limit } = req.params;
+    const accounts = await accountsModel
+      .find({}, { _id: 0, agencia: 1, conta: 1, name: 1, balance: 1 })
+      .sort({ balance: -1, name: 1 })
+      .limit(Number(limit));
+    res.json(accounts);
+  } catch (err) {
+    res.status(500).json({ location: 'biggestBalanceClients', error: err });
+  }
+};
+
 export {
   depositRoute,
   withdrawRoute,
@@ -175,4 +189,5 @@ export {
   transferRoute,
   balanceAverageRoute,
   lowestBalanceClientsRoute,
+  biggestBalanceClientsRoute,
 };
