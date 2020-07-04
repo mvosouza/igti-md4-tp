@@ -135,18 +135,36 @@ const transferRoute = async (req, res) => {
 
 //Item 9
 const balanceAverageRoute = async (req, res) => {
-  const { agencia } = req.params;
+  try {
+    const { agencia } = req.params;
 
-  const balanceAverageCalc = await accountsModel.aggregate([
-    { $match: { agencia: Number(agencia) } },
-    { $group: { _id: '$agencia', balanceAverage: { $avg: '$balance' } } },
-  ]);
+    const balanceAverageCalc = await accountsModel.aggregate([
+      { $match: { agencia: Number(agencia) } },
+      { $group: { _id: '$agencia', balanceAverage: { $avg: '$balance' } } },
+    ]);
 
-  const agenciaResult = balanceAverageCalc[0];
-  let balanceAverage = 0;
-  if (agenciaResult) balanceAverage = agenciaResult.balanceAverage;
+    const agenciaResult = balanceAverageCalc[0];
+    let balanceAverage = 0;
+    if (agenciaResult) balanceAverage = agenciaResult.balanceAverage;
 
-  res.json({ balanceAverage });
+    res.json({ balanceAverage });
+  } catch (error) {
+    res.status(500).json({ location: 'balanceAverage', error: err });
+  }
+};
+
+//Item 10
+const lowestBalanceClientsRoute = async (req, res) => {
+  try {
+    const { limit } = req.params;
+    const accounts = await accountsModel
+      .find({}, { _id: 0, agencia: 1, conta: 1, balance: 1 })
+      .sort({ balance: 1 })
+      .limit(Number(limit));
+    res.json(accounts);
+  } catch (err) {
+    res.status(500).json({ location: 'lowestBalanceClients', error: err });
+  }
 };
 
 export {
@@ -156,4 +174,5 @@ export {
   deleteAccountRoute,
   transferRoute,
   balanceAverageRoute,
+  lowestBalanceClientsRoute,
 };

@@ -6,6 +6,7 @@ import {
   deleteAccountRoute,
   transferRoute,
   balanceAverageRoute,
+  lowestBalanceClientsRoute,
 } from '../controllers/accounts.js';
 
 const router = express.Router();
@@ -27,5 +28,8 @@ router.patch('/transfer', transferRoute);
 
 //Média do saldo de uma agencia
 router.get('/balanceAverage/:agencia', balanceAverageRoute);
+
+//Mostrar X clientes com o menor saldo
+router.get('/lowestBalanceClients/:limit', lowestBalanceClientsRoute);
 
 export default router;
